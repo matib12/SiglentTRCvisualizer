@@ -178,12 +178,10 @@ if ~C
     return;
 end;
 
-plotHandle = findobj(gcf,'Tag','spectrumPlot');
 %%Iloœæ punktów pomiarowych
 points_num = length(C);
 freq_points = logspace(log10(Start_freq),log10(Stop_freq),points_num);
 CtoPrint = C;
-
 switch unitChoosen
     case 2
         if C
@@ -199,13 +197,7 @@ switch unitChoosen
         end;
 end;
 
-semilogx(plotHandle, freq_points', CtoPrint);
-title('Spectrum')
-legend('Trace A', 'Trace B', 'Trace C', 'Trace D');
-set(plotHandle,'Tag','spectrumPlot');
-xlabel('Freq [Hz]');
-xlim([Start_freq Stop_freq]);
-
+plotHandle = findobj(gcf,'Tag','spectrumPlot');
 
 ymax_auto_get = get(findobj(gcf,'Tag','checkbox_ymax_auto'),'Value');
 if ~ymax_auto_get
@@ -214,18 +206,30 @@ end;
 
 switch unitChoosen
     case 1
-        ylabel('PSD [dBm/Hz]');
+        semilogx(plotHandle, freq_points', CtoPrint);
+        set(plotHandle,'Tag','spectrumPlot');
+        ylabel(plotHandle,'PSD [dBm/Hz]');
     case 2
-        ylabel('PSD [V^2/Hz]');
+        loglog(plotHandle, freq_points', CtoPrint);
+        set(plotHandle,'Tag','spectrumPlot');
+        ylabel(plotHandle,'PSD [V^2/Hz]');
         if ~ymax_auto_get
-            ylim([0 ymax]);
+            ylim(plotHandle,[0 ymax]);
         end;
     case 3
-        ylabel('PSD [V/sqrt(Hz)]');
+        loglog(plotHandle, freq_points', CtoPrint);
+        set(plotHandle,'Tag','spectrumPlot');
+        ylabel(plotHandle,'PSD [V/sqrt(Hz)]');
         if ~ymax_auto_get
-            ylim([0 ymax]);
+            ylim(plotHandle,[0 ymax]);
         end;
 end;
+
+title(plotHandle,'Spectrum')
+legend(plotHandle,'Trace A', 'Trace B', 'Trace C', 'Trace D');
+xlabel(plotHandle,'Freq [Hz]');
+xlim(plotHandle,[Start_freq Stop_freq]);
+grid on;
 
 
 function edit_Rload_Callback(hObject, eventdata, handles)
